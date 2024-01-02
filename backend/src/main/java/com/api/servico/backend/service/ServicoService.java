@@ -12,10 +12,10 @@ import com.api.servico.backend.entity.Servico;
 import com.api.servico.backend.repository.ServicoRepository;
 import com.api.servico.backend.service.exceptions.DatabaseException;
 import com.api.servico.backend.service.exceptions.ResourceNotFoundException;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Service
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class ServicoService {
 
     @Autowired
@@ -44,18 +44,25 @@ public class ServicoService {
         } else {
             servico.setStatus("realizado");
         }
-        return servicoRepository.saveAndFlush(servico);
+        return servicoRepository.save(servico);
     }
 
-    public Servico alterar(Long id, Servico obj) {
-        try {
-            if (obj.getValorPago() != null || obj.getValorPago() > 0 || obj.getDataPagamento() != null) {
-                obj.setStatus("realizado");
-            }
-            return servicoRepository.save(servicoRepository.getReferenceById(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);
-        }
+    public Servico alterar(Servico obj) {
+    	 Servico servicoExistente = servicoRepository.findById(obj.getId()).orElse(null);
+    	 if (servicoExistente != null) {
+	        if (obj.getValorPago() != null && (servicoExistente.getValorPago() == null || !obj.getValorPago().equals(servicoExistente.getValorPago()))) {
+	            servicoExistente.setValorPago(obj.getValorPago());
+	        }
+
+	        // Verifica se o valor pago é maior que zero e se o status não é "realizado" antes de atualizar
+	        if (servicoExistente.getValorPago() != null && servicoExistente.getValorPago() > 0 && !"realizado".equals(servicoExistente.getStatus())) {
+	            obj.setStatus("realizado");
+	            obj.setValorPago(servicoExistente.getValorPago());
+	        }
+	        // Atualiza o objeto existente no banco de dados
+	        return servicoRepository.save(obj);  
+    	 }
+         return servicoRepository.save(obj);
     }
 
     public void excluir(Long id) {
@@ -67,5 +74,11 @@ public class ServicoService {
             throw new DatabaseException(e.getMessage());
         }
     }
+    
+//    private void updateData(Servico entity, Servico obj) {
+//        entity.setNomeCliente(obj.getNomeCliente());
+//        entity.setDescricaoServico(obj.getDescricaoServico());
+//        entity.setValorServico(obj.getValorServico());
+//    }
 
 }

@@ -1,6 +1,8 @@
 package com.api.servico.backend.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,24 +10,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
 @Table(name = "servico")
-public class Servico {
+public class Servico implements Serializable {
+
+    /** Identificador de versão serial para garantir a compatibilidade durante a serialização. */
+    private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     private String nomeCliente;
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime dataInicio = LocalDateTime.now();
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime dataTermino = LocalDateTime.now();
     private String descricaoServico;
     private Double valorServico;
@@ -33,4 +34,97 @@ public class Servico {
     @Column(columnDefinition = "DATE")
     private LocalDateTime dataPagamento;
     private String status; // "pendente", "realizado", "cancelado"
+	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Servico other = (Servico) obj;
+		return Objects.equals(id, other.id);
+	}
+	
+	public Servico() {
+		
+	}
+	
+	public Servico(Long id, String nomeCliente, LocalDateTime dataInicio, LocalDateTime dataTermino,
+			String descricaoServico, Double valorServico, Double valorPago, LocalDateTime dataPagamento,
+			String status) {
+		this.id = id;
+		this.nomeCliente = nomeCliente;
+		this.dataInicio = dataInicio;
+		this.dataTermino = dataTermino;
+		this.descricaoServico = descricaoServico;
+		this.valorServico = valorServico;
+		this.valorPago = valorPago;
+		this.dataPagamento = dataPagamento;
+		this.status = status;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getNomeCliente() {
+		return nomeCliente;
+	}
+	public void setNomeCliente(String nomeCliente) {
+		this.nomeCliente = nomeCliente;
+	}
+	public LocalDateTime getDataInicio() {
+		return dataInicio;
+	}
+	public void setDataInicio(LocalDateTime dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+	public LocalDateTime getDataTermino() {
+		return dataTermino;
+	}
+	public void setDataTermino(LocalDateTime dataTermino) {
+		this.dataTermino = dataTermino;
+	}
+	public String getDescricaoServico() {
+		return descricaoServico;
+	}
+	public void setDescricaoServico(String descricaoServico) {
+		this.descricaoServico = descricaoServico;
+	}
+	public Double getValorServico() {
+		return valorServico;
+	}
+	public void setValorServico(Double valorServico) {
+		this.valorServico = valorServico;
+	}
+	public Double getValorPago() {
+		return valorPago;
+	}
+	public void setValorPago(Double valorPago) {
+		this.valorPago = valorPago;
+	}
+	public LocalDateTime getDataPagamento() {
+		return dataPagamento;
+	}
+	public void setDataPagamento(LocalDateTime dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	
+    
+    
 }

@@ -9,16 +9,16 @@ import com.api.servico.backend.entity.Servico;
 
 public interface ServicoRepository extends  JpaRepository<Servico, Long> {
     
-    @Query(nativeQuery = true, value = """
+    @Query(value = """
             SELECT s 
               FROM Servico s 
-             WHERE s.valorPago <> null 
-               AND s.valorPago > 0
+             WHERE s.valorPago IS NULL
+             	OR s.valorPago = 0
             """)
     List<Servico> buscarServicosPagamentoPendente();
 
 
-    @Query(nativeQuery = true, value = """
+    @Query(value = """
             SELECT s 
               FROM Servico s 
              WHERE s.status = 'cancelado'
