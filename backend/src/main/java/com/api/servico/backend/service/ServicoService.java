@@ -1,5 +1,6 @@
 package com.api.servico.backend.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,9 +56,10 @@ public class ServicoService {
 	        }
 
 	        // Verifica se o valor pago é maior que zero e se o status não é "realizado" antes de atualizar
-	        if (servicoExistente.getValorPago() != null && servicoExistente.getValorPago() > 0 && !"realizado".equals(servicoExistente.getStatus())) {
+	        if (servicoExistente.getValorPago() != null && servicoExistente.getValorPago() > 0 && !"realizado".equals(servicoExistente.getStatus()) || servicoExistente.getStatus() == null) {
 	            obj.setStatus("realizado");
 	            obj.setValorPago(servicoExistente.getValorPago());
+	            obj.setDataPagamento(LocalDate.now());
 	        }
 	        // Atualiza o objeto existente no banco de dados
 	        return servicoRepository.save(obj);  
@@ -74,11 +76,5 @@ public class ServicoService {
             throw new DatabaseException(e.getMessage());
         }
     }
-    
-//    private void updateData(Servico entity, Servico obj) {
-//        entity.setNomeCliente(obj.getNomeCliente());
-//        entity.setDescricaoServico(obj.getDescricaoServico());
-//        entity.setValorServico(obj.getValorServico());
-//    }
 
 }

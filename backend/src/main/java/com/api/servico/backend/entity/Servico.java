@@ -1,7 +1,7 @@
 package com.api.servico.backend.entity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
 
 @Entity
 @Table(name = "servico")
@@ -24,15 +23,15 @@ public class Servico implements Serializable {
     private Long id;
 
     private String nomeCliente;
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime dataInicio = LocalDateTime.now();
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime dataTermino = LocalDateTime.now();
+    @Column(columnDefinition = "DATE")
+    private LocalDate dataInicio = LocalDate.now();
+    @Column(columnDefinition = "DATE")
+    private LocalDate dataTermino = LocalDate.now();
     private String descricaoServico;
     private Double valorServico;
     private Double valorPago;
     @Column(columnDefinition = "DATE")
-    private LocalDateTime dataPagamento;
+    private LocalDate dataPagamento;
     private String status; // "pendente", "realizado", "cancelado"
 	
 	
@@ -56,8 +55,8 @@ public class Servico implements Serializable {
 		
 	}
 	
-	public Servico(Long id, String nomeCliente, LocalDateTime dataInicio, LocalDateTime dataTermino,
-			String descricaoServico, Double valorServico, Double valorPago, LocalDateTime dataPagamento,
+	public Servico(Long id, String nomeCliente, LocalDate dataInicio, LocalDate dataTermino,
+			String descricaoServico, Double valorServico, Double valorPago, LocalDate dataPagamento,
 			String status) {
 		this.id = id;
 		this.nomeCliente = nomeCliente;
@@ -81,16 +80,16 @@ public class Servico implements Serializable {
 	public void setNomeCliente(String nomeCliente) {
 		this.nomeCliente = nomeCliente;
 	}
-	public LocalDateTime getDataInicio() {
+	public LocalDate getDataInicio() {
 		return dataInicio;
 	}
-	public void setDataInicio(LocalDateTime dataInicio) {
+	public void setDataInicio(LocalDate dataInicio) {
 		this.dataInicio = dataInicio;
 	}
-	public LocalDateTime getDataTermino() {
+	public LocalDate getDataTermino() {
 		return dataTermino;
 	}
-	public void setDataTermino(LocalDateTime dataTermino) {
+	public void setDataTermino(LocalDate dataTermino) {
 		this.dataTermino = dataTermino;
 	}
 	public String getDescricaoServico() {
@@ -111,10 +110,10 @@ public class Servico implements Serializable {
 	public void setValorPago(Double valorPago) {
 		this.valorPago = valorPago;
 	}
-	public LocalDateTime getDataPagamento() {
+	public LocalDate getDataPagamento() {
 		return dataPagamento;
 	}
-	public void setDataPagamento(LocalDateTime dataPagamento) {
+	public void setDataPagamento(LocalDate dataPagamento) {
 		this.dataPagamento = dataPagamento;
 	}
 	public String getStatus() {
