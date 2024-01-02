@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class ServicoController {
      * @return ResponseEntity contendo a lista de todos os serviços.
      */
     @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<Servico>> findAll() {
         List<Servico> list = servicoService.buscarTodos();
         return ResponseEntity.ok().body(list);
@@ -47,6 +49,7 @@ public class ServicoController {
      * @return ResponseEntity contendo o serviço correspondente ao ID fornecido.
      */
     @GetMapping(value = "/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Servico> findById(@PathVariable Long id) {
         Servico obj = servicoService.buscarPorId(id);
         return ResponseEntity.ok().body(obj);
@@ -58,6 +61,7 @@ public class ServicoController {
      * @return ResponseEntity contendo a lista de serviços com pagamento pendente.
      */
     @GetMapping(value = "/pagamentopendente")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<Servico>> buscarServicosPagamentoPendente() {
         List<Servico> list = servicoService.buscarServicosPagamentoPendente();
         return ResponseEntity.ok().body(list);
@@ -69,6 +73,7 @@ public class ServicoController {
      * @return ResponseEntity contendo a lista de serviços cancelados.
      */
     @GetMapping(value = "/cancelados")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<List<Servico>> buscarServicosCancelados() {
         List<Servico> list = servicoService.buscarServicosCancelados();
         return ResponseEntity.ok().body(list);
@@ -81,6 +86,7 @@ public class ServicoController {
      * @return ResponseEntity contendo o serviço inserido e a URI para acessar o recurso.
      */
     @PostMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Servico> insert(@RequestBody Servico obj) {
         obj = servicoService.inserir(obj);
         URI uri = ServletUriComponentsBuilder
@@ -96,6 +102,7 @@ public class ServicoController {
      * @return O serviço atualizado.
      */
     @PutMapping
+    @CrossOrigin(origins = "http://localhost:3000")
     public Servico update(@RequestBody Servico obj) {
         return servicoService.alterar(obj);
     }
@@ -107,6 +114,7 @@ public class ServicoController {
      * @return ResponseEntity indicando o sucesso da operação.
      */
     @DeleteMapping(value = "/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         servicoService.excluir(id);
         return ResponseEntity.noContent().build();
@@ -119,6 +127,7 @@ public class ServicoController {
      * @return ResponseEntity indicando o sucesso da operação.
      */
     @PostMapping(value = "/cancelarservico/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Void> cancelarServico(@PathVariable Long id) {
         servicoService.cancelarServico(id);
         return ResponseEntity.ok().build();
