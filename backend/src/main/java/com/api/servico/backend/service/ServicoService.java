@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.api.servico.backend.entity.Servico;
@@ -30,8 +32,11 @@ public class ServicoService {
      *
      * @return Lista de todos os serviços.
      */
-    public List<Servico> buscarTodos() {
-        return servicoRepository.findAll();
+//    public List<Servico> buscarTodos(Pageable pageable) {
+//        return servicoRepository.findAll();
+//    }
+    public Page<Servico> buscarTodos(Pageable pageable) {
+        return servicoRepository.findAll(pageable);
     }
 
     /**

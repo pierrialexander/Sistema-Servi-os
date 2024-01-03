@@ -4,6 +4,8 @@ package com.api.servico.backend.controller;
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,10 +37,16 @@ public class ServicoController {
      *
      * @return ResponseEntity contendo a lista de todos os serviços.
      */
+//    @GetMapping
+//    @CrossOrigin(origins = "http://localhost:3000")
+//    public ResponseEntity<List<Servico>> findAll() {
+//        List<Servico> list = servicoService.buscarTodos();
+//        return ResponseEntity.ok().body(list);
+//    }
     @GetMapping
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Servico>> findAll() {
-        List<Servico> list = servicoService.buscarTodos();
+    public ResponseEntity<Page<Servico>> findAll(Pageable pageable) {
+        Page<Servico> list = servicoService.buscarTodos(pageable);
         return ResponseEntity.ok().body(list);
     }
 
