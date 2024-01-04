@@ -22,6 +22,13 @@ function Servico() {
         setServico({ ...servico, [event.target.name]: event.target.value })
     }
 
+    /**
+     * Manipula o envio do formulário, evitando a recarga da página,
+     * e realiza uma solicitação HTTP para atualizar ou inserir um serviço
+     * com base nas propriedades do objeto 'servico'. Após a conclusão da
+     * solicitação, redefine o estado 'atualizar' e limpa o formulário.
+     * @param {Event} event - Objeto de evento associado ao envio do formulário.
+     */
     const handleSubmit = (event) => {
         event.preventDefault()
         if (servico.id) {
@@ -68,6 +75,11 @@ function Servico() {
             });
     }, [atualizar]);
 
+    /**
+     * Responsável por formatar a moeda.
+     * @param {*} valor 
+     * @returns 
+     */
     function formatarMoeda(valor) {
         return parseFloat(valor).toLocaleString('pt-BR', {
             style: 'currency',
@@ -75,6 +87,11 @@ function Servico() {
         });
     }
 
+    /**
+     * Resposavel por formatar a data para BR.
+     * @param {*} data 
+     * @returns 
+     */
     function formatarData(data) {
         const dataUtc = new Date(data + 'T00:00:00Z'); // Adiciona o UTC para garantir consistência
         return dataUtc.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
@@ -118,9 +135,55 @@ function Servico() {
         })
     }
 
+    const handleServicosPendentes = () => {
+        axios.get(baseURL + "/pagamentopendente") // ?size=5&page=2
+            .then(result => {
+                console.log(result.data);
+                setServicos(result.data);
+            })
+            .catch(error => {
+                console.error('Erro ao obter dados:', error);
+            });
+    }
+
+    const handleServicosRealizados = () => {
+        axios.get(baseURL + "/realizados") // ?size=5&page=2
+            .then(result => {
+                console.log(result.data);
+                setServicos(result.data);
+            })
+            .catch(error => {
+                console.error('Erro ao obter dados:', error);
+            });
+    }
+
+    const handleServicosCancelados = () => {
+        axios.get(baseURL + "/cancelados") // ?size=5&page=2
+            .then(result => {
+                console.log(result.data);
+                setServicos(result.data);
+            })
+            .catch(error => {
+                console.error('Erro ao obter dados:', error);
+            });
+    }
+
+    const handleListarTodos = () => {
+        axios.get(baseURL) // ?size=5&page=2
+            .then(result => {
+                console.log(result.data.content);
+                setServicos(result.data.content);
+            })
+            .catch(error => {
+                console.error('Erro ao obter dados:', error);
+            });
+    }
+
+    // ============================================================================================
+
     return (
         <div className="container">
-            <h1>Cadastro de Serviços</h1>
+            <h1 className='titulo'>Cadastro de Serviços</h1>
             <br />
             <form onSubmit={handleSubmit}>
                 <div className='col-12'>
@@ -128,55 +191,61 @@ function Servico() {
                     <div class="row mb-3">
                         <label htmlFor="nome" className='col-sm-2 col-form-label'>Nome do Cliente</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.nomeCliente || ''} name='nomeCliente' type="text" className='form-control' id='nome' />
+                            <input onChange={handleChange} value={servico.nomeCliente || ''} name='nomeCliente' type="text" className='form-control input-style' id='nome' />
                         </div>
                     </div>
 
 
-                   <div class="row mb-3">
+                    <div class="row mb-3">
                         <label htmlFor="datainicio" className='col-sm-2 col-form-label'>Data de Início</label>
                         <div class="col-sm-4">
-                            <input onChange={handleChange} value={servico.dataInicio || ''} name='dataInicio' type="date" className='form-control' id='datainicio' />
+                            <input onChange={handleChange} value={servico.dataInicio || ''} name='dataInicio' type="date" className='form-control input-style' id='datainicio' />
                         </div>
 
                         <label htmlFor="datatermino" className='col-sm-1 col-form-label'>Término</label>
                         <div class="col-sm-5">
-                            <input onChange={handleChange} value={servico.dataTermino || ''} name='dataTermino' type="date" className='form-control' id='datatermino' />
+                            <input onChange={handleChange} value={servico.dataTermino || ''} name='dataTermino' type="date" className='form-control input-style' id='datatermino' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="descricao" className='col-sm-2 col-form-label'>Descrição do Serviço</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.descricaoServico || ''} name='descricaoServico' type="text" className='form-control' id='descricao' />
+                            <input onChange={handleChange} value={servico.descricaoServico || ''} name='descricaoServico' type="text" className='form-control input-style' id='descricao' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="valorservico" className='col-sm-2 col-form-label'>Valor do Serviço</label>
                         <div class="col-sm-4">
-                            <input onChange={handleChange} value={servico.valorServico || ''} name="valorServico" type="text" className='form-control' id='valorservico' />
+                            <input onChange={handleChange} value={servico.valorServico || ''} name="valorServico" type="text" className='form-control input-style' id='valorservico' />
                         </div>
 
                         <label htmlFor="valorpago" className='col-sm-1 col-form-label'>Vlr Pago</label>
                         <div class="col-sm-5">
-                            <input onChange={handleChange} value={servico.valorPago || ''} name="valorPago" type="text" className='form-control' id='valorpago' />
+                            <input onChange={handleChange} value={servico.valorPago || ''} name="valorPago" type="text" className='form-control input-style' id='valorpago' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="datapagamento" className='col-sm-2 col-form-label'>Data de Pagamento</label>
-                        <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.dataPagamento || ''} name='dataPagamento' type="date" className='form-control' id='datapagamento' />
+                        <div class="col-sm-4 mb-3">
+                            <input onChange={handleChange} value={servico.dataPagamento || ''} name='dataPagamento' type="date" className='form-control input-style' id='datapagamento' />
+                        </div>
+                        <div className="col-sm-6 text-center"> {/* Utilize ml-auto para a margem à esquerda automática */}
+                            <input type="submit" className='btn btn-primary col-sm-6' value="Gravar" /> {/* Utilize col-sm-12 para ocupar toda a largura da coluna */}
                         </div>
                     </div>
-                    <br />
-                    <input type="submit" className='btn btn-primary' value="Gravar" />&nbsp;&nbsp;
-                    <button className='btn btn-secondary'>Limpar</button>
                 </div>
             </form>
+            <div className="col-12 mt-3">
+                <button onClick={() => limpar()} className='btn btn-secondary m-2'>Limpar</button>
+                <button onClick={() => handleServicosPendentes()} className='btn btn-secondary m-2 rounded-0'>Pendentes de Pagamento</button>
+                <button onClick={() => handleServicosRealizados()} className='btn btn-secondary m-2'>Realizados</button>
+                <button onClick={() => handleServicosCancelados()} className='btn btn-secondary m-2'>Cancelados</button>
+                <button onClick={() => handleListarTodos()} className='btn btn-secondary m-2'>Listar Todos</button>
+            </div>
             <hr />
-
             <table class="table table-dark">
                 <thead>
                     <tr>

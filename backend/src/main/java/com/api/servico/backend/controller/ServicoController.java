@@ -88,6 +88,20 @@ public class ServicoController {
     }
 
     /**
+     * Recupera serviços cancelados.
+     *
+     * @return ResponseEntity contendo a lista de serviços cancelados.
+     */
+    @GetMapping(value = "/realizados")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<List<Servico>> buscarServicosRealizados() {
+        List<Servico> list = servicoService.buscarServicosRealizados();
+        return ResponseEntity.ok().body(list);
+    }
+
+
+
+    /**
      * Insere um novo serviço.
      *
      * @param obj Serviço a ser inserido.

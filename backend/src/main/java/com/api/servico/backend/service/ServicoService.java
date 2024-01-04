@@ -70,6 +70,15 @@ public class ServicoService {
     }
 
     /**
+     * Busca serviços com pagamento pendente.
+     *
+     * @return Lista de serviços com pagamento pendente.
+     */
+    public List<Servico> buscarServicosRealizados() {
+        return servicoRepository.buscarServicosRealizados();
+    }
+
+    /**
      * Insere um novo serviço.
      *
      * @param servico Serviço a ser inserido.

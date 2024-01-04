@@ -1,5 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu');
 
+.titulo {
+  margin-top: 15px;
+  font-size: 30px;
+  margin-bottom: 5px;
+}
+
+.input-style {
+  background-color: #050404;
+  color: white;
+}
+
+.input-style:focus {
+  background-color: #050404;
+  color: white;
+}
+
 .tamanho-botao {
   padding: 5px;
   font-size: 13px;
