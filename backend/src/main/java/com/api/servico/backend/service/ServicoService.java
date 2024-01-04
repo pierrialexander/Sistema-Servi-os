@@ -76,9 +76,10 @@ public class ServicoService {
      * @return Serviço inserido.
      */
     public Servico inserir(Servico servico) {
-        if (servico.getValorPago() == null || servico.getValorPago() == 0 || servico.getDataPagamento() == null) {
+        if ((servico.getValorPago() == null || servico.getValorPago() == 0) && servico.getDataPagamento() == null) {
             servico.setStatus("pendente");
-        } else {
+        } else if(servico.getValorPago() > 0 &&  servico.getDataPagamento() == null){
+        	servico.setDataPagamento(LocalDate.now());
             servico.setStatus("realizado");
         }
         return servicoRepository.save(servico);
@@ -103,6 +104,12 @@ public class ServicoService {
 	            obj.setValorPago(servicoExistente.getValorPago());
 	            obj.setDataPagamento(LocalDate.now());
 	        }
+	        
+	        if(obj.getValorPago() == obj.getValorServico()) {
+	        	obj.setDataPagamento(LocalDate.now());
+	        	obj.setStatus("realizado");	        	
+	        }
+	        
 	        // Atualiza o objeto existente no banco de dados
 	        return servicoRepository.save(obj);  
     	 }
@@ -118,6 +125,19 @@ public class ServicoService {
     public void cancelarServico(Long id) {
     	Servico servico = servicoRepository.findById(id).get(); // Recupero os dados do banco
     	servico.setStatus("cancelado");							// Alteramos o Status
+    	servicoRepository.save(servico);						// Atualizamos
+    }
+    
+    /**
+     * Cancela um serviço pelo ID.
+     *
+     * @param id ID do serviço a ser alterado para pendente.
+     */
+    public void reativarServico(Long id) {
+    	Servico servico = servicoRepository.findById(id).get(); // Recupero os dados do banco
+    	servico.setStatus("pendente");							// Alteramos o Status
+    	servico.setDataPagamento(null);
+    	servico.setValorPago(0.0);
     	servicoRepository.save(servico);						// Atualizamos
     }
 

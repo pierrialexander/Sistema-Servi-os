@@ -1,7 +1,6 @@
 import '../App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
-import { format } from 'date-fns';
 
 function Servico() {
     const baseURL = 'http://localhost:8080/api/servicos'
@@ -25,26 +24,44 @@ function Servico() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        axios.post(baseURL, servico)
-            .then(result => {
-                setAtualizar(result)
+        if (servico.id) {
+            console.log("Atualizando")
+            axios.put(baseURL, servico)
+                .then(result => {
+                    setAtualizar(result)
+                })
+            setServico({
+                nomeCliente: '',
+                dataInicio: '',
+                dataTermino: '',
+                descricaoServico: '',
+                valorServico: '',
+                valorPago: '',
+                dataPagamento: ''
             })
-        setServico({
-            nomeCliente: '',
-            dataInicio: '',
-            dataTermino: '',
-            descricaoServico: '',
-            valorServico: '',
-            valorPago: '',
-            dataPagamento: ''
-        })
+        } else {
+            console.log("Inserindo")
+            axios.post(baseURL, servico)
+                .then(result => {
+                    setAtualizar(result)
+                })
+            setServico({
+                nomeCliente: '',
+                dataInicio: '',
+                dataTermino: '',
+                descricaoServico: '',
+                valorServico: '',
+                valorPago: '',
+                dataPagamento: ''
+            })
+        }
     }
 
     useEffect(() => {
-        axios.get(baseURL)
+        axios.get(baseURL) // ?size=5&page=2
             .then(result => {
-                console.log(result.data);
-                setServicos(result.data);
+                console.log(result.data.content);
+                setServicos(result.data.content);
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -63,6 +80,44 @@ function Servico() {
         return dataUtc.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
     }
 
+    const handleAlterar = (srv) => {
+        setServico(srv);
+    };
+
+    const handleCancelar = (srv) => {
+        console.log(srv.id)
+        axios.post(baseURL + "/cancelarservico/" + srv.id)
+            .then(result => {
+                setAtualizar(result)
+            })
+    };
+
+    const handleExcluir = (srv) => {
+        axios.delete(baseURL + "/" + srv.id)
+            .then(result => {
+                setAtualizar(result)
+            })
+    };
+
+    const handleReativar = (srv) => {
+        axios.post(baseURL + "/reativarservico/" + srv.id)
+            .then(result => {
+                setAtualizar(result)
+            })
+    };
+
+    const limpar = () => {
+        setServico({
+            nomeCliente: '',
+            dataInicio: '',
+            dataTermino: '',
+            descricaoServico: '',
+            valorServico: '',
+            valorPago: '',
+            dataPagamento: ''
+        })
+    }
+
     return (
         <div className="container">
             <h1>Cadastro de Serviços</h1>
@@ -73,53 +128,51 @@ function Servico() {
                     <div class="row mb-3">
                         <label htmlFor="nome" className='col-sm-2 col-form-label'>Nome do Cliente</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.nomeCliente} name='nomeCliente' type="text" className='form-control' id='nome' />
+                            <input onChange={handleChange} value={servico.nomeCliente || ''} name='nomeCliente' type="text" className='form-control' id='nome' />
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+
+                   <div class="row mb-3">
                         <label htmlFor="datainicio" className='col-sm-2 col-form-label'>Data de Início</label>
-                        <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.dataInicio} name='dataInicio' type="date" className='form-control' id='datainicio' />
+                        <div class="col-sm-4">
+                            <input onChange={handleChange} value={servico.dataInicio || ''} name='dataInicio' type="date" className='form-control' id='datainicio' />
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <label htmlFor="datatermino" className='col-sm-2 col-form-label'>Data de Término</label>
-                        <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.dataTermino} name='dataTermino' type="date" className='form-control' id='datatermino' />
+                        <label htmlFor="datatermino" className='col-sm-1 col-form-label'>Término</label>
+                        <div class="col-sm-5">
+                            <input onChange={handleChange} value={servico.dataTermino || ''} name='dataTermino' type="date" className='form-control' id='datatermino' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="descricao" className='col-sm-2 col-form-label'>Descrição do Serviço</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.descricaoServico} name='descricaoServico' type="text" className='form-control' id='descricao' />
+                            <input onChange={handleChange} value={servico.descricaoServico || ''} name='descricaoServico' type="text" className='form-control' id='descricao' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="valorservico" className='col-sm-2 col-form-label'>Valor do Serviço</label>
-                        <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.valorServico} name="valorServico" type="text" className='form-control' id='valorservico' />
+                        <div class="col-sm-4">
+                            <input onChange={handleChange} value={servico.valorServico || ''} name="valorServico" type="text" className='form-control' id='valorservico' />
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <label htmlFor="valorpago" className='col-sm-2 col-form-label'>Valor Pago</label>
-                        <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.valorPago} name="valorPago" type="text" className='form-control' id='valorpago' />
+                        <label htmlFor="valorpago" className='col-sm-1 col-form-label'>Vlr Pago</label>
+                        <div class="col-sm-5">
+                            <input onChange={handleChange} value={servico.valorPago || ''} name="valorPago" type="text" className='form-control' id='valorpago' />
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label htmlFor="datapagamento" className='col-sm-2 col-form-label'>Data de Pagamento</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.dataPagamento} name='dataPagamento' type="date" className='form-control' id='datapagamento' />
+                            <input onChange={handleChange} value={servico.dataPagamento || ''} name='dataPagamento' type="date" className='form-control' id='datapagamento' />
                         </div>
                     </div>
                     <br />
-                    <input type="submit" className='btn btn-success' value="Cadastrar" />
+                    <input type="submit" className='btn btn-primary' value="Gravar" />&nbsp;&nbsp;
+                    <button className='btn btn-secondary'>Limpar</button>
                 </div>
             </form>
             <hr />
@@ -137,7 +190,7 @@ function Servico() {
                 </thead>
                 <tbody>
                     {
-                        servicos.map((srv) => (
+                        servicos.map(srv => (
                             <tr key={srv.id}> {/* Adicione uma chave única para cada elemento */}
                                 <td>{srv.nomeCliente}</td>
                                 <td>{srv.descricaoServico}</td>
@@ -145,9 +198,10 @@ function Servico() {
                                 <td>{formatarData(srv.dataInicio)}</td>
                                 <td>{srv.status}</td>
                                 <td>
-                                    <button className='btn btn-primary'>Alterar</button>&nbsp;&nbsp;
-                                    <button className='btn btn-danger'>Excluir</button>&nbsp;&nbsp;
-                                    <button className='btn btn-warning'>Cancelar</button>&nbsp;&nbsp;
+                                    <button onClick={() => handleAlterar(srv)} className='btn tamanho-botao botao-alterar' disabled={srv.status === 'cancelado' || srv.status === 'realizado'}>Alterar</button>&nbsp;&nbsp;
+                                    <button onClick={() => handleExcluir(srv)} className='btn tamanho-botao botao-excluir' disabled={srv.status === 'realizado'}>Excluir</button>&nbsp;&nbsp;
+                                    <button onClick={() => handleCancelar(srv)} className='btn tamanho-botao botao-cancelar' disabled={srv.status === 'cancelado' || srv.status === 'realizado'}>Cancelar</button>&nbsp;&nbsp;
+                                    <button onClick={() => handleReativar(srv)} className='btn tamanho-botao botao-reativar' disabled={srv.status === 'pendente'}>Reativar</button>&nbsp;&nbsp;
                                 </td>
                             </tr>
                         ))

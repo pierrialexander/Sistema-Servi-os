@@ -140,4 +140,17 @@ public class ServicoController {
         servicoService.cancelarServico(id);
         return ResponseEntity.ok().build();
     }
+    
+    /**
+     * Cancela um serviço pelo ID.
+     *
+     * @param id ID do serviço a ser cancelado.
+     * @return ResponseEntity indicando o sucesso da operação.
+     */
+    @PostMapping(value = "/reativarservico/{id}")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Void> reativarServico(@PathVariable Long id) {
+        servicoService.reativarServico(id);
+        return ResponseEntity.ok().build();
+    }
 }
