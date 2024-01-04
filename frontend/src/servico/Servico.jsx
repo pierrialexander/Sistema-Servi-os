@@ -1,10 +1,11 @@
 import '../App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
+import CsvDownloadButton from 'react-json-to-csv'
 
 function Servico() {
     const baseURL = 'http://localhost:8080/api/servicos'
-
+    
     const [servico, setServico] = useState({
         nomeCliente: '',
         dataInicio: '',
@@ -15,11 +16,21 @@ function Servico() {
         dataPagamento: ''
     })
 
+    const [data, setData] = useState([{
+        startDate: '',
+        endDate: '',
+        dateOf: ''
+    }])
+
     const [servicos, setServicos] = useState([]);
     const [atualizar, setAtualizar] = useState();
 
     const handleChange = (event) => {
         setServico({ ...servico, [event.target.name]: event.target.value })
+    }
+
+    const handleChangeDateConsult = (event) => {
+        setData({ ...data, [event.target.name]: event.target.value })
     }
 
     /**
@@ -179,6 +190,50 @@ function Servico() {
             });
     }
 
+    const hanbleConsultaPagosData = (event) => {
+        event.preventDefault()
+
+        if (data.dateOf == 'dataInicio') {
+            axios.get(baseURL + "/iniciopordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+                .then(result => {
+                    console.log(result.data);
+                    setServicos(result.data);
+                })
+                .catch(error => {
+                    console.error('Erro ao obter dados:', error);
+                });
+        }
+        else if (data.dateOf == 'dataTermino') {
+            axios.get(baseURL + "/terminopordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+                .then(result => {
+                    console.log(result.data);
+                    setServicos(result.data);
+                })
+                .catch(error => {
+                    console.error('Erro ao obter dados:', error);
+                });
+        }
+        else if (data.dateOf == 'dataPagamento') {
+            axios.get(baseURL + "/pagospordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+                .then(result => {
+                    console.log(result.data);
+                    setServicos(result.data);
+                })
+                .catch(error => {
+                    console.error('Erro ao obter dados:', error);
+                });
+        }
+        else {
+            handleListarTodos();
+        }
+
+        setData({
+            startDate: '',
+            endDate: '',
+            dateOf: ''
+        })
+    }
+
     // ============================================================================================
 
     return (
@@ -191,7 +246,7 @@ function Servico() {
                     <div class="row mb-3">
                         <label htmlFor="nome" className='col-sm-2 col-form-label'>Nome do Cliente</label>
                         <div class="col-sm-10">
-                            <input onChange={handleChange} value={servico.nomeCliente || ''} name='nomeCliente' type="text" className='form-control input-style' id='nome' />
+                            <input onChange={handleChange} value={servico.nomeCliente} name='nomeCliente' type="text" className='form-control input-style' id='nome' />
                         </div>
                     </div>
 
@@ -199,12 +254,12 @@ function Servico() {
                     <div class="row mb-3">
                         <label htmlFor="datainicio" className='col-sm-2 col-form-label'>Data de Início</label>
                         <div class="col-sm-4">
-                            <input onChange={handleChange} value={servico.dataInicio || ''} name='dataInicio' type="date" className='form-control input-style' id='datainicio' />
+                            <input onChange={handleChange} value={servico.dataInicio} name='dataInicio' type="date" className='form-control input-style' id='datainicio' />
                         </div>
 
                         <label htmlFor="datatermino" className='col-sm-1 col-form-label'>Término</label>
                         <div class="col-sm-5">
-                            <input onChange={handleChange} value={servico.dataTermino || ''} name='dataTermino' type="date" className='form-control input-style' id='datatermino' />
+                            <input onChange={handleChange} value={servico.dataTermino} name='dataTermino' type="date" className='form-control input-style' id='datatermino' />
                         </div>
                     </div>
 
@@ -238,13 +293,48 @@ function Servico() {
                     </div>
                 </div>
             </form>
+
+
             <div className="col-12 mt-3">
-                <button onClick={() => limpar()} className='btn btn-secondary m-2'>Limpar</button>
-                <button onClick={() => handleServicosPendentes()} className='btn btn-secondary m-2 rounded-0'>Pendentes de Pagamento</button>
-                <button onClick={() => handleServicosRealizados()} className='btn btn-secondary m-2'>Realizados</button>
-                <button onClick={() => handleServicosCancelados()} className='btn btn-secondary m-2'>Cancelados</button>
-                <button onClick={() => handleListarTodos()} className='btn btn-secondary m-2'>Listar Todos</button>
+                <button onClick={() => limpar()} className='btn btn-secondary m-2 rounded-0 p-2'>Limpar</button>
+                <button onClick={() => handleServicosPendentes()} className='btn btn-secondary m-2 rounded-0 p-2'>Pendentes de Pagamento</button>
+                <button onClick={() => handleServicosRealizados()} className='btn btn-secondary m-2 rounded-0 p-2'>Realizados</button>
+                <button onClick={() => handleServicosCancelados()} className='btn btn-secondary m-2 rounded-0 p-2'>Cancelados</button>
+                <button onClick={() => handleListarTodos()} className='btn btn-secondary m-2 rounded-0 p-2'>Listar Todos</button>
+                
             </div>
+            <hr />
+
+            {/* Formulário de consulta por data */}
+            <form onSubmit={hanbleConsultaPagosData}>
+                <div className="row">
+                    <div className="col-sm-3">
+                        <select
+                            className="form-select input-style"
+                            aria-label=".form-select-sm example"
+                            onChange={handleChangeDateConsult}
+                            value={data.dateOf}
+                            name="dateOf"
+                        >
+                            <option value="">Consultar datas por</option>
+                            <option value="dataInicio">Data de Início</option>
+                            <option value="dataTermino">Data de Término</option>
+                            <option value="dataPagamento">Data de Pagamento</option>
+                        </select>
+                    </div>
+                    <div className="col-sm-3">
+                        <input onChange={handleChangeDateConsult} value={data.startDate || ''} name='startDate' type="date" className='form-control input-style' id='datapagamento' />
+                    </div>
+                    <div className="col-sm-3">
+                        <input onChange={handleChangeDateConsult} value={data.endDate || ''} name='endDate' type="date" className='form-control input-style' id='datapagamento' />
+                    </div>
+                    <div className="col-sm-2">
+                        <input type="submit" className="btn btn-primary" value="Buscar" />
+                    </div>
+                </div>
+            </form>
+
+
             <hr />
             <table class="table table-dark">
                 <thead>
@@ -254,7 +344,9 @@ function Servico() {
                         <th scope="col">Valor</th>
                         <th scope="col">Data de Início</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Ações</th>
+                        <th scope="col">Ações &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Baixar CSV:&nbsp;&nbsp;&nbsp;                         
+                        <CsvDownloadButton data={servicos} filename="Dados" className='btn btn-secondary rounded-0 botao-csv' />
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

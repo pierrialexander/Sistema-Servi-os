@@ -2,21 +2,15 @@ package com.api.servico.backend.controller;
 
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.servico.backend.entity.Servico;
@@ -62,6 +56,57 @@ public class ServicoController {
         Servico obj = servicoService.buscarPorId(id);
         return ResponseEntity.ok().body(obj);
     }
+
+    /**
+     * Retorna uma lista de serviços dentro de um determinado período de datas de pagamento.
+     * Este endpoint permite a consulta de serviços com base em suas datas de pagamento.
+     *
+     * @param startDate Data de início do período desejado. Deve ser formatada no padrão ISO DATE (AAAA-MM-DD).
+     * @param endDate Data de término do período desejado. Deve ser formatada no padrão ISO DATE (AAAA-MM-DD).
+     * @return Uma lista de serviços realizados durante o período de datas de pagamento fornecido.
+     * @throws IllegalArgumentException Se as datas fornecidas não estiverem no formato correto ou se startDate for posterior a endDate.
+     */
+    @GetMapping(value = "/pagospordata")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public List<Servico> buscarServicosPeriodoDataPagamento(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return servicoService.buscarServicosPeriodoDataPagamento(startDate, endDate);
+    }
+
+    /**
+     * Retorna uma lista de serviços dentro do período especificado pela data de início e data de término.
+     *
+     * @param startDate Data de início do período no formato ISO_DATE (AAAA-MM-DD).
+     * @param endDate   Data de término do período no formato ISO_DATE (AAAA-MM-DD).
+     * @return Uma lista de objetos Servico que estão dentro do período especificado.
+     * @throws IllegalArgumentException Se as datas de início e término não estiverem no formato esperado.
+     */
+    @GetMapping(value = "/iniciopordata")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public List<Servico> buscarServicosPeriodoDataInicio(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return servicoService.buscarServicosPeriodoDataInicio(startDate, endDate);
+    }
+
+    /**
+     * Retorna uma lista de serviços dentro do período especificado pela data de início e data de término.
+     *
+     * @param startDate Data de início do período no formato ISO_DATE (AAAA-MM-DD).
+     * @param endDate   Data de término do período no formato ISO_DATE (AAAA-MM-DD).
+     * @return Uma lista de objetos Servico que estão dentro do período especificado.
+     * @throws IllegalArgumentException Se as datas de início e término não estiverem no formato esperado.
+     */
+    @GetMapping(value = "/terminopordata")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public List<Servico> buscarServicosPeriodoDataTermino(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return servicoService.buscarServicosPeriodoDataTermino(startDate, endDate);
+    }
+
+
 
     /**
      * Recupera serviços com pagamento pendente.

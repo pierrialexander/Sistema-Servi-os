@@ -1,11 +1,13 @@
 package com.api.servico.backend.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.api.servico.backend.entity.Servico;
+import org.springframework.data.repository.query.Param;
 
 public interface ServicoRepository extends  JpaRepository<Servico, Long> {
     
@@ -17,7 +19,6 @@ public interface ServicoRepository extends  JpaRepository<Servico, Long> {
                AND s.status <> 'cancelado'
             """)
     List<Servico> buscarServicosPagamentoPendente();
-
 
     @Query(value = """
             SELECT s 
@@ -32,4 +33,32 @@ public interface ServicoRepository extends  JpaRepository<Servico, Long> {
              WHERE s.status = 'realizado'
             """)
     List<Servico> buscarServicosRealizados();
+
+    @Query(value = """
+            SELECT s 
+              FROM Servico s 
+             WHERE s.dataPagamento 
+           BETWEEN :startDate 
+               AND :endDate
+            """)
+    List<Servico> buscarServicosPeriodoDataPagamento(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = """
+            SELECT s 
+              FROM Servico s 
+             WHERE s.dataInicio 
+           BETWEEN :startDate 
+               AND :endDate
+            """)
+    List<Servico> buscarServicosPeriodoDataInicio(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query(value = """
+            SELECT s 
+              FROM Servico s 
+             WHERE s.dataTermino 
+           BETWEEN :startDate 
+               AND :endDate
+            """)
+    List<Servico> buscarServicosPeriodoDataTermino(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 }

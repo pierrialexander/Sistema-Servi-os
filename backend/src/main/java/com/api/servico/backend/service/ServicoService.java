@@ -52,6 +52,43 @@ public class ServicoService {
     }
 
     /**
+     * Retorna uma lista de serviços dentro do período especificado pela data de pagamento.
+     *
+     * @param startDate Data de início do período no formato ISO_DATE (AAAA-MM-DD).
+     * @param endDate   Data de término do período no formato ISO_DATE (AAAA-MM-DD).
+     * @return Uma lista de objetos Servico que estão dentro do período especificado.
+     * @throws IllegalArgumentException Se as datas de início e término não estiverem no formato esperado.
+     */
+    public List<Servico> buscarServicosPeriodoDataPagamento(LocalDate startDate, LocalDate endDate) {
+        return servicoRepository.buscarServicosPeriodoDataPagamento(startDate, endDate);
+    }
+
+    /**
+     * Retorna uma lista de serviços dentro do período especificado pela data de início.
+     *
+     * @param startDate Data de início do período no formato ISO_DATE (AAAA-MM-DD).
+     * @param endDate   Data de término do período no formato ISO_DATE (AAAA-MM-DD).
+     * @return Uma lista de objetos Servico que estão dentro do período especificado.
+     * @throws IllegalArgumentException Se as datas de início e término não estiverem no formato esperado.
+     */
+    public List<Servico> buscarServicosPeriodoDataInicio(LocalDate startDate, LocalDate endDate) {
+        return servicoRepository.buscarServicosPeriodoDataInicio(startDate, endDate);
+    }
+
+    /**
+     * Retorna uma lista de serviços dentro do período especificado pela data de término.
+     *
+     * @param startDate Data de início do período no formato ISO_DATE (AAAA-MM-DD).
+     * @param endDate   Data de término do período no formato ISO_DATE (AAAA-MM-DD).
+     * @return Uma lista de objetos Servico que estão dentro do período especificado.
+     * @throws IllegalArgumentException Se as datas de início e término não estiverem no formato esperado.
+     */
+    public List<Servico> buscarServicosPeriodoDataTermino(LocalDate startDate, LocalDate endDate) {
+        return servicoRepository.buscarServicosPeriodoDataTermino(startDate, endDate);
+    }
+
+
+    /**
      * Busca serviços com pagamento pendente.
      *
      * @return Lista de serviços com pagamento pendente.
@@ -124,7 +161,6 @@ public class ServicoService {
     	 }
          return servicoRepository.save(obj);
     }
-    
 
     /**
      * Cancela um serviço pelo ID.
