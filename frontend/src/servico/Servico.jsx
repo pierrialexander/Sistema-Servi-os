@@ -2,9 +2,22 @@ import '../App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import CsvDownloadButton from 'react-json-to-csv'
+import ReactPaginate from 'react-paginate'
 
 function Servico() {
     const baseURL = 'http://localhost:8080/api/servicos'
+
+    const [totalPaginas, setTotalPaginas] = useState();
+        
+    
+    const handlePageClick = (data) => {
+        console.log(data.selected)
+    }
+    
+    
+    
+    
+    
     
     const [servico, setServico] = useState({
         nomeCliente: '',
@@ -16,7 +29,7 @@ function Servico() {
         dataPagamento: ''
     })
 
-    const [data, setData] = useState([{
+    const [datas, setDatas] = useState([{
         startDate: '',
         endDate: '',
         dateOf: ''
@@ -30,7 +43,7 @@ function Servico() {
     }
 
     const handleChangeDateConsult = (event) => {
-        setData({ ...data, [event.target.name]: event.target.value })
+        setDatas({ ...datas, [event.target.name]: event.target.value })
     }
 
     /**
@@ -78,8 +91,8 @@ function Servico() {
     useEffect(() => {
         axios.get(baseURL) // ?size=5&page=2
             .then(result => {
-                console.log(result.data.content);
                 setServicos(result.data.content);
+                setTotalPaginas(result.data.totalElements)
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -113,7 +126,6 @@ function Servico() {
     };
 
     const handleCancelar = (srv) => {
-        console.log(srv.id)
         axios.post(baseURL + "/cancelarservico/" + srv.id)
             .then(result => {
                 setAtualizar(result)
@@ -149,7 +161,6 @@ function Servico() {
     const handleServicosPendentes = () => {
         axios.get(baseURL + "/pagamentopendente") // ?size=5&page=2
             .then(result => {
-                console.log(result.data);
                 setServicos(result.data);
             })
             .catch(error => {
@@ -160,7 +171,6 @@ function Servico() {
     const handleServicosRealizados = () => {
         axios.get(baseURL + "/realizados") // ?size=5&page=2
             .then(result => {
-                console.log(result.data);
                 setServicos(result.data);
             })
             .catch(error => {
@@ -171,7 +181,6 @@ function Servico() {
     const handleServicosCancelados = () => {
         axios.get(baseURL + "/cancelados") // ?size=5&page=2
             .then(result => {
-                console.log(result.data);
                 setServicos(result.data);
             })
             .catch(error => {
@@ -182,8 +191,8 @@ function Servico() {
     const handleListarTodos = () => {
         axios.get(baseURL) // ?size=5&page=2
             .then(result => {
-                console.log(result.data.content);
                 setServicos(result.data.content);
+                setTotalPaginas(result.data.totalElements)
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -193,30 +202,27 @@ function Servico() {
     const hanbleConsultaPagosData = (event) => {
         event.preventDefault()
 
-        if (data.dateOf == 'dataInicio') {
-            axios.get(baseURL + "/iniciopordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+        if (datas.dateOf == 'dataInicio') {
+            axios.get(baseURL + "/iniciopordata?startDate=" + datas.startDate + "&endDate=" + datas.endDate)
                 .then(result => {
-                    console.log(result.data);
                     setServicos(result.data);
                 })
                 .catch(error => {
                     console.error('Erro ao obter dados:', error);
                 });
         }
-        else if (data.dateOf == 'dataTermino') {
-            axios.get(baseURL + "/terminopordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+        else if (datas.dateOf == 'dataTermino') {
+            axios.get(baseURL + "/terminopordata?startDate=" + datas.startDate + "&endDate=" + datas.endDate)
                 .then(result => {
-                    console.log(result.data);
                     setServicos(result.data);
                 })
                 .catch(error => {
                     console.error('Erro ao obter dados:', error);
                 });
         }
-        else if (data.dateOf == 'dataPagamento') {
-            axios.get(baseURL + "/pagospordata?startDate=" + data.startDate + "&endDate=" + data.endDate)
+        else if (datas.dateOf == 'dataPagamento') {
+            axios.get(baseURL + "/pagospordata?startDate=" + datas.startDate + "&endDate=" + datas.endDate)
                 .then(result => {
-                    console.log(result.data);
                     setServicos(result.data);
                 })
                 .catch(error => {
@@ -227,7 +233,7 @@ function Servico() {
             handleListarTodos();
         }
 
-        setData({
+        setDatas({
             startDate: '',
             endDate: '',
             dateOf: ''
@@ -313,7 +319,7 @@ function Servico() {
                             className="form-select input-style"
                             aria-label=".form-select-sm example"
                             onChange={handleChangeDateConsult}
-                            value={data.dateOf}
+                            value={datas.dateOf}
                             name="dateOf"
                         >
                             <option value="">Consultar datas por</option>
@@ -323,10 +329,10 @@ function Servico() {
                         </select>
                     </div>
                     <div className="col-sm-3">
-                        <input onChange={handleChangeDateConsult} value={data.startDate || ''} name='startDate' type="date" className='form-control input-style' id='datapagamento' />
+                        <input onChange={handleChangeDateConsult} value={datas.startDate || ''} name='startDate' type="date" className='form-control input-style' id='datapagamento' />
                     </div>
                     <div className="col-sm-3">
-                        <input onChange={handleChangeDateConsult} value={data.endDate || ''} name='endDate' type="date" className='form-control input-style' id='datapagamento' />
+                        <input onChange={handleChangeDateConsult} value={datas.endDate || ''} name='endDate' type="date" className='form-control input-style' id='datapagamento' />
                     </div>
                     <div className="col-sm-2">
                         <input type="submit" className="btn btn-primary" value="Buscar" />
@@ -369,6 +375,24 @@ function Servico() {
                     }
                 </tbody>
             </table>
+            
+            <ReactPaginate 
+                previousLabel={'< Previous'}
+                nextLabel={'Next >'}
+                breakLabel={'...'}
+                pageCount={totalPaginas}
+                marginPagesDisplayed={4}
+                pageRangeDisplayed={3}
+                onPageChange={handlePageClick}
+                containerClassName={'pagination'}
+                pageClassName={'page-item'}
+                pageLinkClassName={'page-link'}
+                previousClassName={'page-item'}
+                previousLinkClassName={'page-link'}
+                nextClassName={'page-item'}
+                nextLinkClassName={'page-link'}
+            />
+
         </div>
     );
 }
