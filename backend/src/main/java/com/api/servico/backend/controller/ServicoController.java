@@ -31,12 +31,6 @@ public class ServicoController {
      *
      * @return ResponseEntity contendo a lista de todos os serviços.
      */
-//    @GetMapping
-//    @CrossOrigin(origins = "http://localhost:3000")
-//    public ResponseEntity<List<Servico>> findAll() {
-//        List<Servico> list = servicoService.buscarTodos();
-//        return ResponseEntity.ok().body(list);
-//    }
     @GetMapping
     @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Page<Servico>> findAll(Pageable pageable) {

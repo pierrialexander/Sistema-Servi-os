@@ -3,22 +3,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import CsvDownloadButton from 'react-json-to-csv'
 import ReactPaginate from 'react-paginate'
+import { toast, ToastContainer } from 'react-toastify';
 
 function Servico() {
     const baseURL = 'http://localhost:8080/api/servicos'
 
     const [totalPaginas, setTotalPaginas] = useState();
-        
-    
+    const [itemsPage, setItemsPage] = useState([]);
+    const [paginaAtual, setPaginaAtual] = useState();
+
+
     const handlePageClick = (data) => {
         console.log(data.selected)
+        let currentPage = data.selected;
+        setPaginaAtual(currentPage);
+        setAtualizar(currentPage)
     }
-    
-    
-    
-    
-    
-    
+
     const [servico, setServico] = useState({
         nomeCliente: '',
         dataInicio: '',
@@ -55,6 +56,17 @@ function Servico() {
      */
     const handleSubmit = (event) => {
         event.preventDefault()
+
+        // if (!servico.nomeCliente || !servico.dataInicio || !servico.valorServico || servico.descricaoServico) {
+        //     alert("Os campos Nome, Data de início, Valor do Serviço e Descrição não podem ser vazios.");
+        //     return;
+        // }
+
+        if (!servico.nomeCliente || !servico.dataInicio || !servico.valorServico || servico.descricaoServico) {
+            toast.error("Os campos Nome, Data de início, Valor do Serviço e Descrição não podem ser vazios.");
+            return;
+        }
+
         if (servico.id) {
             console.log("Atualizando")
             axios.put(baseURL, servico)
@@ -89,10 +101,10 @@ function Servico() {
     }
 
     useEffect(() => {
-        axios.get(baseURL) // ?size=5&page=2
+        axios.get(baseURL + "?page=" + paginaAtual + "&size=15") // ?page=0&size=15
             .then(result => {
                 setServicos(result.data.content);
-                setTotalPaginas(result.data.totalElements)
+                setTotalPaginas(result.data.totalPages)
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -307,7 +319,7 @@ function Servico() {
                 <button onClick={() => handleServicosRealizados()} className='btn btn-secondary m-2 rounded-0 p-2'>Realizados</button>
                 <button onClick={() => handleServicosCancelados()} className='btn btn-secondary m-2 rounded-0 p-2'>Cancelados</button>
                 <button onClick={() => handleListarTodos()} className='btn btn-secondary m-2 rounded-0 p-2'>Listar Todos</button>
-                
+
             </div>
             <hr />
 
@@ -350,8 +362,8 @@ function Servico() {
                         <th scope="col">Valor</th>
                         <th scope="col">Data de Início</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Ações &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Baixar CSV:&nbsp;&nbsp;&nbsp;                         
-                        <CsvDownloadButton data={servicos} filename="Dados" className='btn btn-secondary rounded-0 botao-csv' />
+                        <th scope="col">Ações &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Baixar CSV:&nbsp;&nbsp;&nbsp;
+                            <CsvDownloadButton data={servicos} filename="Dados" className='btn btn-secondary rounded-0 botao-csv' />
                         </th>
                     </tr>
                 </thead>
@@ -375,22 +387,25 @@ function Servico() {
                     }
                 </tbody>
             </table>
-            
-            <ReactPaginate 
+
+            <ReactPaginate
                 previousLabel={'< Previous'}
                 nextLabel={'Next >'}
                 breakLabel={'...'}
                 pageCount={totalPaginas}
-                marginPagesDisplayed={4}
+                marginPagesDisplayed={2}
                 pageRangeDisplayed={3}
                 onPageChange={handlePageClick}
-                containerClassName={'pagination'}
+                containerClassName={'pagination justify-content-center'}
                 pageClassName={'page-item'}
                 pageLinkClassName={'page-link'}
                 previousClassName={'page-item'}
                 previousLinkClassName={'page-link'}
                 nextClassName={'page-item'}
                 nextLinkClassName={'page-link'}
+                breakClassName={'page-item'}
+                breakLinkClassName={'page-link'}
+                activeClassName={'active'}
             />
 
         </div>
