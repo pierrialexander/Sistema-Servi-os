@@ -10,14 +10,29 @@ function Servico() {
 
     const [totalPaginas, setTotalPaginas] = useState();
     const [itemsPage, setItemsPage] = useState([]);
-    const [paginaAtual, setPaginaAtual] = useState();
+    const [paginaAtual, setPaginaAtual] = useState(0);
 
+    const [servicos, setServicos] = useState([]);
+    const [atualizar, setAtualizar] = useState();
+
+    const [tipoPagina, setTipoPagina] = useState('')
 
     const handlePageClick = (data) => {
         console.log(data.selected)
         let currentPage = data.selected;
-        setPaginaAtual(currentPage);
-        setAtualizar(currentPage)
+
+        console.log(tipoPagina)
+
+        if(tipoPagina == 'Pendentes') {
+            handleServicosPendentes(currentPage)
+        } 
+        else if(tipoPagina == 'Realizados') {
+            handleServicosRealizados(currentPage)
+        }
+        else if(tipoPagina == 'Cancelados') {
+            handleServicosCancelados(currentPage)
+        }
+
     }
 
     const [servico, setServico] = useState({
@@ -36,9 +51,6 @@ function Servico() {
         dateOf: ''
     }])
 
-    const [servicos, setServicos] = useState([]);
-    const [atualizar, setAtualizar] = useState();
-
     const handleChange = (event) => {
         setServico({ ...servico, [event.target.name]: event.target.value })
     }
@@ -52,15 +64,10 @@ function Servico() {
      * e realiza uma solicitação HTTP para atualizar ou inserir um serviço
      * com base nas propriedades do objeto 'servico'. Após a conclusão da
      * solicitação, redefine o estado 'atualizar' e limpa o formulário.
-     * @param {Event} event - Objeto de evento associado ao envio do formulário.
+                            * @param {Event} event - Objeto de evento associado ao envio do formulário.
      */
     const handleSubmit = (event) => {
         event.preventDefault()
-
-        // if (!servico.nomeCliente || !servico.dataInicio || !servico.valorServico || servico.descricaoServico) {
-        //     alert("Os campos Nome, Data de início, Valor do Serviço e Descrição não podem ser vazios.");
-        //     return;
-        // }
 
         if (!servico.nomeCliente || !servico.dataInicio || !servico.valorServico || servico.descricaoServico) {
             toast.error("Os campos Nome, Data de início, Valor do Serviço e Descrição não podem ser vazios.");
@@ -110,6 +117,8 @@ function Servico() {
                 console.error('Erro ao obter dados:', error);
             });
     }, [atualizar]);
+
+
 
     /**
      * Responsável por formatar a moeda.
@@ -170,30 +179,36 @@ function Servico() {
         })
     }
 
-    const handleServicosPendentes = () => {
-        axios.get(baseURL + "/pagamentopendente") // ?size=5&page=2
+    const handleServicosPendentes = (paginaAtual) => {
+        axios.get(baseURL + "/pagamentopendente" + "?page=" + paginaAtual + "&size=15") // ?size=5&page=2
             .then(result => {
-                setServicos(result.data);
+                setServicos(result.data.content);
+                setTotalPaginas(result.data.totalPages)
+                setTipoPagina('Pendentes')
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
             });
     }
 
-    const handleServicosRealizados = () => {
-        axios.get(baseURL + "/realizados") // ?size=5&page=2
+    const handleServicosRealizados = (paginaAtual) => {
+        axios.get(baseURL + "/realizados" + "?page=" + paginaAtual + "&size=15") // ?size=5&page=2
             .then(result => {
-                setServicos(result.data);
+                setServicos(result.data.content);
+                setTotalPaginas(result.data.totalPages)
+                setTipoPagina('Realizados')
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
             });
     }
 
-    const handleServicosCancelados = () => {
-        axios.get(baseURL + "/cancelados") // ?size=5&page=2
+    const handleServicosCancelados = (paginaAtual) => {
+        axios.get(baseURL + "/cancelados" + "?page=" + paginaAtual + "&size=15") // ?size=5&page=2
             .then(result => {
-                setServicos(result.data);
+                setServicos(result.data.content);
+                setTotalPaginas(result.data.totalPages)
+                setTipoPagina('Cancelados')
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -201,10 +216,11 @@ function Servico() {
     }
 
     const handleListarTodos = () => {
-        axios.get(baseURL) // ?size=5&page=2
+        axios.get(baseURL + "?page=" + paginaAtual + "&size=15") // ?size=5&page=2
             .then(result => {
                 setServicos(result.data.content);
-                setTotalPaginas(result.data.totalElements)
+                setTotalPaginas(result.data.totalPages)
+                setPaginaAtual(0)
             })
             .catch(error => {
                 console.error('Erro ao obter dados:', error);
@@ -315,7 +331,7 @@ function Servico() {
 
             <div className="col-12 mt-3">
                 <button onClick={() => limpar()} className='btn btn-secondary m-2 rounded-0 p-2'>Limpar</button>
-                <button onClick={() => handleServicosPendentes()} className='btn btn-secondary m-2 rounded-0 p-2'>Pendentes de Pagamento</button>
+                <button onClick={() => handleServicosPendentes(paginaAtual)} className='btn btn-secondary m-2 rounded-0 p-2'>Pendentes de Pagamento</button>
                 <button onClick={() => handleServicosRealizados()} className='btn btn-secondary m-2 rounded-0 p-2'>Realizados</button>
                 <button onClick={() => handleServicosCancelados()} className='btn btn-secondary m-2 rounded-0 p-2'>Cancelados</button>
                 <button onClick={() => handleListarTodos()} className='btn btn-secondary m-2 rounded-0 p-2'>Listar Todos</button>

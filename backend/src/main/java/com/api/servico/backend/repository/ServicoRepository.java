@@ -3,6 +3,8 @@ package com.api.servico.backend.repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,21 +20,21 @@ public interface ServicoRepository extends  JpaRepository<Servico, Long> {
              	OR s.valorPago = 0
                AND s.status <> 'cancelado'
             """)
-    List<Servico> buscarServicosPagamentoPendente();
+    Page<Servico> buscarServicosPagamentoPendente(Pageable pageable);
 
     @Query(value = """
             SELECT s 
               FROM Servico s 
              WHERE s.status = 'cancelado'
             """)
-    List<Servico> buscarServicosCancelados();
+    Page<Servico> buscarServicosCancelados(Pageable pageable);
 
     @Query(value = """
             SELECT s 
               FROM Servico s 
              WHERE s.status = 'realizado'
             """)
-    List<Servico> buscarServicosRealizados();
+    Page<Servico> buscarServicosRealizados(Pageable pageable);
 
     @Query(value = """
             SELECT s 

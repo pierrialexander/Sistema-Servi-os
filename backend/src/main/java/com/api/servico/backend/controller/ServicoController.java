@@ -109,8 +109,8 @@ public class ServicoController {
      */
     @GetMapping(value = "/pagamentopendente")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Servico>> buscarServicosPagamentoPendente() {
-        List<Servico> list = servicoService.buscarServicosPagamentoPendente();
+    public ResponseEntity<Page<Servico>> buscarServicosPagamentoPendente(Pageable pageable) {
+        Page<Servico> list = servicoService.buscarServicosPagamentoPendente(pageable);
         return ResponseEntity.ok().body(list);
     }
 
@@ -121,20 +121,20 @@ public class ServicoController {
      */
     @GetMapping(value = "/cancelados")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Servico>> buscarServicosCancelados() {
-        List<Servico> list = servicoService.buscarServicosCancelados();
+    public ResponseEntity<Page<Servico>> buscarServicosCancelados(Pageable pageable) {
+    	Page<Servico> list = servicoService.buscarServicosCancelados(pageable);
         return ResponseEntity.ok().body(list);
     }
 
     /**
      * Recupera serviços cancelados.
      *
-     * @return ResponseEntity contendo a lista de serviços cancelados.
+     * @return ResponseEntity contendo a lista de serviços realizados.
      */
     @GetMapping(value = "/realizados")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<List<Servico>> buscarServicosRealizados() {
-        List<Servico> list = servicoService.buscarServicosRealizados();
+    public ResponseEntity<Page<Servico>> buscarServicosRealizados(Pageable pageable) {
+        Page<Servico> list = servicoService.buscarServicosRealizados(pageable);
         return ResponseEntity.ok().body(list);
     }
 

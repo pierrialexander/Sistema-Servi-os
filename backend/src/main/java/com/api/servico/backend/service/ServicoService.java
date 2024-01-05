@@ -32,9 +32,7 @@ public class ServicoService {
      *
      * @return Lista de todos os serviços.
      */
-//    public List<Servico> buscarTodos(Pageable pageable) {
-//        return servicoRepository.findAll();
-//    }
+
     public Page<Servico> buscarTodos(Pageable pageable) {
         return servicoRepository.findAll(pageable);
     }
@@ -93,8 +91,8 @@ public class ServicoService {
      *
      * @return Lista de serviços com pagamento pendente.
      */
-    public List<Servico> buscarServicosPagamentoPendente() {
-        return servicoRepository.buscarServicosPagamentoPendente();
+    public Page<Servico> buscarServicosPagamentoPendente(Pageable pageable) {
+        return servicoRepository.buscarServicosPagamentoPendente(pageable);
     }
 
     /**
@@ -102,8 +100,8 @@ public class ServicoService {
      *
      * @return Lista de serviços cancelados.
      */
-    public List<Servico> buscarServicosCancelados() {
-        return servicoRepository.buscarServicosCancelados();
+    public Page<Servico> buscarServicosCancelados(Pageable pageable) {
+        return servicoRepository.buscarServicosCancelados(pageable);
     }
 
     /**
@@ -111,8 +109,8 @@ public class ServicoService {
      *
      * @return Lista de serviços com pagamento pendente.
      */
-    public List<Servico> buscarServicosRealizados() {
-        return servicoRepository.buscarServicosRealizados();
+    public Page<Servico> buscarServicosRealizados(Pageable pageable) {
+        return servicoRepository.buscarServicosRealizados(pageable);
     }
 
     /**
